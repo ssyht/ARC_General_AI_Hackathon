@@ -1,2 +1,8 @@
-# ARC_General_AI_Hackathon
-This is the code repo for the Mizzou ARC General AI Hackathon happening on Nov 15th-16th, 2025
+# ARC Test-Time Learning Mini-Solver
+
+**One-liner:** Learns from 2–6 examples *during the test*, tries ≤5 explainable candidates, verifies, then answers or abstains.
+
+## Quickstart
+```bash
+pip install -r requirements.txt
+python run_demo.py --task data/arc_subset/abc123

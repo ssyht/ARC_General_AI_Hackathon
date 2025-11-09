@@ -9,5 +9,6 @@ def detect_symmetry(grid):
     pass
 
 def extract_features(task):
-    # precompute features for train pairs
-    return {"train_objs": [], "sym": []}
+    # super light: palette sizes + simple symmetry checks we might use later
+    return {"n_examples": len(task["train"])}
+

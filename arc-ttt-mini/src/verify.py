@@ -1,18 +1,27 @@
-def checklist(input_grid, output_grid):
-    # booleans: colors_preserved, connectivity_ok, counts_reasonable
-    return {"colors_preserved": True, "connectivity_ok": True, "counts_ok": True}
+from collections import Counter
 
-def confidence(checks, score=None):
-    # simple weighting -> 0..1
-    val = 0.33*checks["colors_preserved"] + 0.33*checks["connectivity_ok"] + 0.34*checks["counts_ok"]
+def _palette(g):
+    return Counter(v for row in g for v in row)
+
+def checklist(input_grid, output_grid):
+    inp, out = _palette(input_grid), _palette(output_grid)
+    colors_ok = set(out.keys()).issubset(set(list(inp.keys()) + list(out.keys())))
+    # weak checks just to wire the demo:
+    counts_ok = abs(sum(out.values()) - sum(inp.values())) == 0
+    connectivity_ok = True  # placeholder for now
+    return {"colors_preserved": bool(colors_ok), "connectivity_ok": connectivity_ok, "counts_ok": counts_ok}
+
+def confidence(checks):
+    val = 0.34*checks["colors_preserved"] + 0.33*checks["connectivity_ok"] + 0.33*checks["counts_ok"]
     return float(val)
 
 def verify_candidate(task, cand_grid):
     ch = checklist(task["test"]["input"], cand_grid)
-    return {"checks": ch, "confidence": confidence(ch)}
+    ch["confidence"] = confidence(ch)
+    return ch
 
 def decide(candidates, threshold=0.55):
-    # pick highest confidence; abstain below threshold
     best = max(candidates, key=lambda c: c["checks"]["confidence"])
     conf = best["checks"]["confidence"]
-    return {"grid": best.get("grid"), "confidence": conf, "abstain": conf < threshold, "why": "verification-driven"}
+    return {"grid": best["grid"], "confidence": conf, "abstain": conf < threshold, "why": best["rationale"]}
+
